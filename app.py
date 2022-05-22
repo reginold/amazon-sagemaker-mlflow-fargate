@@ -49,14 +49,14 @@ class DeploymentStack(Stack):
         # ==================================================
         # ==================== VPC =========================
         # ==================================================
-        public_subnet = ec2.SubnetConfiguration(name='Public', subnet_type=ec2.SubnetType.PUBLIC, cidr_mask=28)
-        private_subnet = ec2.SubnetConfiguration(name='Private', subnet_type=ec2.SubnetType.PRIVATE_WITH_NAT, cidr_mask=28)
+        public_subnet = ec2.SubnetConfiguration(name='PublicMLfow', subnet_type=ec2.SubnetType.PUBLIC, cidr_mask=28)
+        private_subnet = ec2.SubnetConfiguration(name='PrivateMLfow', subnet_type=ec2.SubnetType.PRIVATE_WITH_NAT, cidr_mask=28)
         isolated_subnet = ec2.SubnetConfiguration(name='DB', subnet_type=ec2.SubnetType.PRIVATE_ISOLATED, cidr_mask=28)
 
         vpc = ec2.Vpc(
             scope=self,
             id='VPC',
-            cidr='10.0.0.0/24',
+            cidr='11.0.0.0/24',
             max_azs=2,
             nat_gateway_provider=ec2.NatProvider.gateway(),
             nat_gateways=1,
@@ -78,7 +78,7 @@ class DeploymentStack(Stack):
         # Creates a security group for AWS RDS
         sg_rds = ec2.SecurityGroup(scope=self, id='SGRDS', vpc=vpc, security_group_name='sg_rds')
         # Adds an ingress rule which allows resources in the VPC's CIDR to access the database.
-        sg_rds.add_ingress_rule(peer=ec2.Peer.ipv4('10.0.0.0/24'), connection=ec2.Port.tcp(port))
+        sg_rds.add_ingress_rule(peer=ec2.Peer.ipv4('11.0.0.0/24'), connection=ec2.Port.tcp(port))
 
         database = rds.DatabaseInstance(
             scope=self,
